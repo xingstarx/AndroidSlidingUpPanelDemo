@@ -58,6 +58,10 @@ public class ViewPagerDemoActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 System.out.println("onPageSelected :" + position + ",setScrollableView.");
                 //change set ScrollableView
+                if (position == 1) {
+                    mLayout.setDragView(null);
+                    return;
+                }
                 mLayout.setScrollableView(mFragmentList.get(position).recyclerView);
             }
 
@@ -84,8 +88,8 @@ public class ViewPagerDemoActivity extends AppCompatActivity {
         TextView t = (TextView) findViewById(R.id.name);
         t.setText(Html.fromHtml(getString(R.string.hello)));
         Button f = (Button) findViewById(R.id.follow);
-        f.setText(Html.fromHtml(getString(R.string.follow)));
-        f.setMovementMethod(LinkMovementMethod.getInstance());
+//        f.setText(Html.fromHtml(getString(R.string.follow)));
+//        f.setMovementMethod(LinkMovementMethod.getInstance());
         f.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

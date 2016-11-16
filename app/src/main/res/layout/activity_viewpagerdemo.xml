@@ -11,14 +11,15 @@
         android:gravity="bottom"
         sothree:umanoDragView="@+id/dragView"
         sothree:umanoOverlay="true"
-        sothree:umanoPanelHeight="300dp"
+        sothree:umanoPanelHeight="480dp"
         sothree:umanoParallaxOffset="100dp">
         <!--sothree:umanoScrollableView="@+id/list"-->
 
         <!-- MAIN CONTENT -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="160dp"
+            android:background="@android:color/background_dark"
             android:orientation="vertical">
 
             <TextView
