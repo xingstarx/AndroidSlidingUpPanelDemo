@@ -3,6 +3,10 @@ package com.star.androidslidinguppaneldemo;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,13 +41,7 @@ public class DemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
-        ListView lv = (ListView) findViewById(R.id.list);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(DemoActivity.this, "onItemClick", Toast.LENGTH_SHORT).show();
-            }
-        });
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         List<String> your_array_list = Arrays.asList(
                 "This",
@@ -71,15 +70,6 @@ public class DemoActivity extends AppCompatActivity {
                 "SlidingUpPanelLayout"
         );
 
-        // This is the array adapter, it takes the context of the activity as a
-        // first parameter, the type of list view as a second parameter and your
-        // array as a third parameter.
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                your_array_list );
-
-        lv.setAdapter(arrayAdapter);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLayout.addPanelSlideListener(new PanelSlideListener() {
@@ -91,12 +81,6 @@ public class DemoActivity extends AppCompatActivity {
             @Override
             public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
                 Log.i(TAG, "onPanelStateChanged " + newState);
-            }
-        });
-        mLayout.setFadeOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mLayout.setPanelState(PanelState.COLLAPSED);
             }
         });
 
@@ -113,6 +97,10 @@ public class DemoActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager(), mLayout));
+
+
     }
 
     @Override
@@ -175,6 +163,47 @@ public class DemoActivity extends AppCompatActivity {
             mLayout.setPanelState(PanelState.COLLAPSED);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+        private SlidingUpPanelLayout mSlidingUpPanelLayout;
+
+        public ScreenSlidePagerAdapter(FragmentManager fm, SlidingUpPanelLayout supl) {
+            super(fm);
+            mSlidingUpPanelLayout = supl;
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object item) {
+            super.setPrimaryItem(container, position, item);
+            if (item instanceof Fragment) {
+                View primaryView = ((Fragment) item).getView();
+                if (primaryView != null) {
+                    mSlidingUpPanelLayout.setScrollableView(primaryView.findViewById(R.id.scrollableView));
+                    mSlidingUpPanelLayout.setDragView(primaryView.findViewById(R.id.dragView));
+                    mSlidingUpPanelLayout.setTouchEnabled(false);
+                }
+            }
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new ScrollViewFragment();
+                case 1:
+                    return new ListViewFragment();
+                case 2:
+                    return new RecyclerViewFragment();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
         }
     }
 }
